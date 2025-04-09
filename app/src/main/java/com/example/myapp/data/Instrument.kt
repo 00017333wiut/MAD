@@ -27,17 +27,17 @@ data class Instrument(
     @SerialName("title")
     val model: String = "",
 
-    val type: String = "",
+    val type: String = "GUITAR",
 
     val price: Double = 0.0,
 
     @SerialName("description")
-    val brand: String = "",
+    val brand: String = "UNKNOWN",
 
     @SerialName("is_it_true")
     val availability: String = "0",
 
-    val color: String = "",
+    val color: String = "UNKNOWN",
 
     @SerialName("integer_one")
     val material: Int = 0,

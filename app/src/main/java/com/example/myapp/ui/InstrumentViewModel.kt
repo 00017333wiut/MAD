@@ -40,16 +40,12 @@ class InstrumentViewModel(private val instrumentRepository: InstrumentRepository
     }
 
     fun getInstruments() {
+        Log.d("ViewModel", "Getting instruments")
         instrumentUiState = InstrumentUiState.Loading
         viewModelScope.launch {
             instrumentUiState = try {
                 val instruments = instrumentRepository.getInstruments()
                 Log.d("ViewModel", "Got ${instruments.size} instruments")
-                if (instruments.isEmpty()) {
-                    Log.d("ViewModel", "Instruments list is empty")
-                } else {
-                    Log.d("ViewModel", "First instrument: ${instruments[0]}")
-                }
                 InstrumentUiState.Success(instruments)
             } catch (e: IOException) {
                 Log.e("ViewModel", "Network error: ${e.message}")
@@ -61,58 +57,67 @@ class InstrumentViewModel(private val instrumentRepository: InstrumentRepository
         }
     }
 
-//    fun addInstrument(instrumentRequest: InstrumentRequest) {
-//        _operationState.update { OperationState.Loading }
-//        viewModelScope.launch {
-//            try {
-//                val response = instrumentRepository.insertNewInstrument(instrumentRequest)
-//                if (response.status == "OK") {
-//                    _operationState.update { OperationState.Success(response.message) }
-//                    // refresh the instrument list
-//                    getInstruments()
-//                } else {
-//                    _operationState.update { OperationState.Error(response.message) }
-//                }
-//            } catch (e: Exception) {
-//                _operationState.update { OperationState.Error("Error adding instrument: ${e.message}") }
-//            }
-//        }
-//    }
+    fun addInstrument(instrumentRequest: Instrument) {
+        _operationState.update { OperationState.Loading }
+        viewModelScope.launch {
+            try {
+                val response = instrumentRepository.insertNewInstrument(instrumentRequest)
+                if (response.status == "OK") {
+                    _operationState.update { OperationState.Success(response.message) }
+                    // refresh the instrument list
+                    getInstruments()
+                } else {
+                    _operationState.update { OperationState.Error(response.message) }
+                }
+            } catch (e: Exception) {
+                _operationState.update { OperationState.Error("Error adding instrument: ${e.message}") }
+            }
+        }
+    }
 
-//    fun updateInstrument(instrumentId: Int, instrumentRequest: InstrumentRequest) {
-//        _operationState.update { OperationState.Loading }
-//        viewModelScope.launch {
-//            try {
-//                val response = instrumentRepository.updateInstrument(instrumentId, instrumentRequest)
-//                if (response.status == "OK") {
-//                    _operationState.update { OperationState.Success(response.message) }
-//                    // Refresh the instrument list
-//                    getInstruments()
-//                } else {
-//                    _operationState.update { OperationState.Error(response.message) }
-//                }
-//            } catch (e: Exception) {
-//                _operationState.update { OperationState.Error("Error updating instrument: ${e.message}") }
-//            }
-//        }
-//    }
+    fun updateInstrument(instrumentId: Int?, instrumentRequest: Instrument) {
+        _operationState.update { OperationState.Loading }
+        viewModelScope.launch {
+            try {
+                Log.d("ViewModel", "Updating instrument $instrumentId: $instrumentRequest")
+                val response = instrumentRepository.updateInstrument(instrumentId, instrumentRequest)
+                Log.d("ViewModel", "Update response: ${response.status} - ${response.message}")
+
+                if (response.status == "OK") {
+                    _operationState.update { OperationState.Success(response.message) }
+                    Log.d("ViewModel", "Refreshing instruments after update")
+                    getInstruments()
+                } else {
+                    _operationState.update { OperationState.Error(response.message) }
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error updating instrument: ${e.message}")
+                _operationState.update { OperationState.Error("Error updating instrument: ${e.message}") }
+            }
+        }
+    }
+
     fun deleteInstrument(instrumentId: Int?) {
-//        _operationState.update { OperationState.Loading }
-//        viewModelScope.launch {
-//            try {
-//                val response = instrumentRepository.deleteInstrumentById(instrumentId)
-//                if (response.status == "OK") {
-//                    _operationState.update { OperationState.Success(response.message) }
-//                    // Refresh the instrument list
-//                    getInstruments()
-//                } else {
-//                    _operationState.update { OperationState.Error(response.message) }
-//                }
-//            } catch (e: Exception) {
-//                _operationState.update { OperationState.Error("Error deleting instrument: ${e.message}") }
-//            }
-//        }
-   }
+        _operationState.update { OperationState.Loading }
+        viewModelScope.launch {
+            try {
+                Log.d("ViewModel", "Deleting instrument: $instrumentId")
+                val response = instrumentRepository.deleteInstrumentById(instrumentId)
+                Log.d("ViewModel", "Delete response: ${response.status} - ${response.message}")
+
+                if (response.status == "OK") {
+                    _operationState.update { OperationState.Success(response.message) }
+                    Log.d("ViewModel", "Refreshing instruments after delete")
+                    getInstruments()
+                } else {
+                    _operationState.update { OperationState.Error(response.message) }
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error deleting instrument: ${e.message}")
+                _operationState.update { OperationState.Error("Error deleting instrument: ${e.message}") }
+            }
+        }
+    }
 
     fun resetOperationState() {
         _operationState.update { OperationState.Idle }

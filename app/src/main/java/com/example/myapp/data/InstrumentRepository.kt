@@ -16,7 +16,10 @@ class InstrumentRepository {
     suspend fun getInstruments(): List<Instrument> {
         return try {
             val response = InstrumentApi.retrofitService.getInstruments(STUDENT_ID)
-            Log.d("Repository", "Success: ${response.status}, got ${response.data.size} instruments")
+            Log.d(
+                "Repository",
+                "Success: ${response.status}, got ${response.data.size} instruments"
+            )
             response.data
         } catch (e: Exception) {
             Log.e("Repository", "Error fetching instruments: ${e.message}")
@@ -24,37 +27,55 @@ class InstrumentRepository {
         }
     }
 
-
+    //insert
+    suspend fun insertNewInstrument(instrumentRequest: Instrument): PostResponse {
+        return try {
+            val myResponse = InstrumentApi.retrofitService.insertNewInstrument(
+                STUDENT_ID,
+                instrumentRequest
+            )
+            Log.d("Repository", "Success: ${myResponse.status}, message: ${myResponse.message}")
+            myResponse
+        } catch (e: Exception) {
+            Log.e("Repository", "Error adding instrument: ${e.message}")
+            throw e
+        }
+    }
 
 
     //update
-//    suspend fun updateInstrument(instrumentId: Int, instrumentRequest: InstrumentRequest): MyResponse {
-//        val myResponse = InstrumentApi.retrofitService.updateInstrument(
-//            STUDENT_ID,
-//            instrumentId,
-//            instrumentRequest
-//        )
-//        Log.d("myResponse", myResponse.message)
-//        return myResponse
-//    }
+    suspend fun updateInstrument(instrumentId: Int?, instrumentRequest: Instrument): PostResponse {
+        val response = InstrumentApi.retrofitService.updateInstrument(
+            instrumentId,
+            STUDENT_ID,
+            instrumentRequest
+        )
+        Log.d("myResponse", response.message)
+        return PostResponse(
+            code = response.code,
+            status = response.status,
+            message = response.message
+        )
+    }
 
-//    //insert
-//    suspend fun insertNewInstrument(instrumentRequest: InstrumentRequest): MyResponse {
-//        val myResponse = InstrumentApi.retrofitService.insertNewInstrument(
-//            STUDENT_ID,
-//            instrumentRequest
-//        )
-//        Log.d("myResponse", myResponse.message)
-//        return myResponse
-//    }
-//
-//    //delete
-//    suspend fun deleteInstrumentById(instrumentId: Int) : MyResponse{
-//        val myResponse = InstrumentApi.retrofitService.deleteInstrumentById(
-//            STUDENT_ID,
-//            instrumentId
-//        )
-//        Log.d("myResponse", myResponse.message)
-//        return myResponse
-//    }
+
+    //delete
+    suspend fun deleteInstrumentById(instrumentId: Int?): PostResponse {
+        return try {
+            val response = InstrumentApi.retrofitService.deleteInstrumentById(
+                instrumentId,
+                STUDENT_ID
+            )
+            Log.d("myResponse", response.message)
+
+            PostResponse(
+                code = response.code,
+                status = response.status,
+                message = response.message
+            )
+        } catch (e: Exception) {
+            Log.e("Repository", "Error deleting: ${e.message}")
+            throw e
+        }
+    }
 }

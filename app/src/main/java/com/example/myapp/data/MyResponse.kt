@@ -14,3 +14,10 @@ data class MyResponse<T>(
     @SerialName("data")
     val data: T
 )
+
+@Serializable
+data class PostResponse(
+    @SerialName("code") val code: Int = 0,
+    @SerialName("status") val status: String = "",
+    @SerialName("message") val message: String = ""
+)

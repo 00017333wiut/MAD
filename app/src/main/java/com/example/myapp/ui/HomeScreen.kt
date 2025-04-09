@@ -123,24 +123,24 @@ fun InstrumentHomeScreen(
     }
 
     // Add/Edit Instrument Dialog
-//    if (showAddDialog || selectedInstrument != null) {
-//        InstrumentDialog(
-//            instrument = selectedInstrument,
-//            onDismiss = {
-//                showAddDialog = false
-//                selectedInstrument = null
-//            },
-//            onSave = { request ->
-//                if (selectedInstrument != null) {
-//                    viewModel.updateInstrument(selectedInstrument!!.id, request)
-//                } else {
-//                    viewModel.addInstrument(request)
-//                }
-//                showAddDialog = false
-//                selectedInstrument = null
-//            }
-//        )
-//    }
+    if (showAddDialog || selectedInstrument != null) {
+        InstrumentDialog(
+            instrument = selectedInstrument,
+            onDismiss = {
+                showAddDialog = false
+                selectedInstrument = null
+            },
+            onSave = { request ->
+                if (selectedInstrument != null) {
+                    viewModel.updateInstrument(selectedInstrument!!.id, request)
+                } else {
+                    viewModel.addInstrument(request)
+                }
+                showAddDialog = false
+                selectedInstrument = null
+            }
+        )
+    }
 
     // Delete confirmation dialog
     if (showDeleteConfirmation && selectedInstrument != null) {
@@ -152,15 +152,18 @@ fun InstrumentHomeScreen(
             title = { Text(stringResource(R.string.title_delete_confirm)) },
             text = { Text(
                 text = stringResource(
-                    R.string.msg_delete_confirm,  // Resource ID
-                    selectedInstrument?.model ?: ""  // Value for %s placeholder
+                    R.string.msg_delete_confirm,
+                    selectedInstrument?.model ?: ""  // value for %s placeholder
                 )
             ) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        scope.launch {
-                            viewModel.deleteInstrument(selectedInstrument!!.id)
+                        val id = selectedInstrument?.id
+                        if (id != null) {
+                            scope.launch {
+                                viewModel.deleteInstrument(id)
+                            }
                         }
                         showDeleteConfirmation = false
                         selectedInstrument = null
@@ -169,7 +172,8 @@ fun InstrumentHomeScreen(
                     Text(stringResource(R.string.delete))
                 }
             },
-            dismissButton = {
+
+                    dismissButton = {
                 TextButton(
                     onClick = {
                         showDeleteConfirmation = false
@@ -278,7 +282,7 @@ fun InstrumentCard(
                 TextButton(onClick = onEditClick) {
                     Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.add))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text(stringResource(R.string.add))
+                    Text(stringResource(R.string.edit))
                 }
 
                 TextButton(onClick = onDeleteClick) {
@@ -343,7 +347,7 @@ fun InstrumentDialog(
     val isEditing = instrument != null
 
     var model by remember { mutableStateOf(instrument?.model ?: "") }
-    var type by remember { mutableStateOf(instrument?.type.toString()) }
+    var type by remember { mutableStateOf(instrument?.type ?: "") }
     var price by remember { mutableStateOf((instrument?.price ?: 0.0).toString()) }
     var brand by remember { mutableStateOf(instrument?.brand ?: "") }
     var availability by remember { mutableStateOf(instrument?.availability ?: "0") }
@@ -444,7 +448,7 @@ fun InstrumentDialog(
                 onClick = {
                     val request = Instrument(
                         model = model,
-                        type = type.toString(),
+                        type = type,
                         price = price.toDoubleOrNull() ?: 0.0,
                         brand = brand,
                         availability = availability,
@@ -455,7 +459,7 @@ fun InstrumentDialog(
                     )
                     onSave(request)
                 },
-                enabled = model.isNotBlank() && type.toString().isNotBlank() && price.isNotBlank()
+                enabled = model.isNotBlank() && type.isNotBlank() && price.isNotBlank()
             ) {
                 Text(stringResource(R.string.save))
             }
