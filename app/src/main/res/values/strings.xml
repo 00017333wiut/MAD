@@ -1,3 +1,35 @@
 <resources>
-    <string name="app_name">MyApp</string>
+    <string name="app_name">Instruments App</string>
+        <!-- Common actions -->
+        <string name="add">Add</string>
+        <string name="edit">Edit</string>
+        <string name="delete">Delete</string>
+        <string name="save">Save</string>
+        <string name="cancel">Cancel</string>
+        <string name="retry">Retry</string>
+
+        <!-- Titles -->
+        <string name="title_instruments">Musical Instruments</string>
+        <string name="title_delete_confirm">Delete Instrument</string>
+        <string name="title_edit_instrument">Edit Instrument</string>
+        <string name="title_add_instrument">Add New Instrument</string>
+        <string name="title_empty_list">No instruments available</string>
+
+        <!-- Messages -->
+        <string name="msg_delete_confirm">Are you sure you want to delete %s?</string>
+        <string name="msg_empty_list">Add a new instrument to get started</string>
+        <string name="msg_available">Available: %s</string>
+        <string name="msg_yes">Yes</string>
+        <string name="msg_no">No</string>
+
+        <!-- Form labels -->
+        <string name="label_model">Model</string>
+        <string name="label_type">Type: %s</string>
+        <string name="label_price">Price</string>
+        <string name="label_brand">Brand</string>
+        <string name="label_available">Available</string>
+        <string name="label_color">Color: %s</string>
+        <string name="label_material">Material (numeric)</string>
+        <string name="label_string_count">String Count (numeric)</string>
+        <string name="label_warranty">Warranty (months)</string>
 </resources>
